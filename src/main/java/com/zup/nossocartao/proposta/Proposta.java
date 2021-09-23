@@ -1,11 +1,9 @@
 package com.zup.nossocartao.proposta;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zup.nossocartao.validacao.CpfOuCnpjValido;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +12,10 @@ import java.math.BigDecimal;
 
 
 @Entity
+@Table(
+        name="proposta",
+        uniqueConstraints=
+        @UniqueConstraint(columnNames={"documento"}))
 public class Proposta {
 
     @Id
@@ -21,8 +23,10 @@ public class Proposta {
     private Long id;
 
     //Documento do solicitante deve ser obrigatório e válido
+
+    @JsonProperty
     @NotBlank
-    @CpfOuCnpjValido
+    @CpfOuCnpjValido(message = "Fornato incorreto de CPF ou CNPJ")
     private String documento;
 
     //E-mail não pode ser vazio, nulo ou inválido
@@ -45,6 +49,9 @@ public class Proposta {
     @NotNull
     @Positive
     private BigDecimal salario;
+
+    public Proposta() {
+    }
 
     public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
         this.documento = documento;

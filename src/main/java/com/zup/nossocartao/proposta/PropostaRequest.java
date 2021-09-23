@@ -3,6 +3,7 @@ package com.zup.nossocartao.proposta;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zup.nossocartao.validacao.CpfOuCnpjValido;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ public class PropostaRequest {
     @JsonProperty
     @NotBlank
     @CpfOuCnpjValido(message = "Fornato incorreto de CPF ou CNPJ")
+    @Column(unique=true)
     private String documento;
 
     //E-mail não pode ser vazio, nulo ou inválido
@@ -75,5 +77,9 @@ public class PropostaRequest {
 
     public void setSalario(BigDecimal salario) {
         this.salario = salario;
+    }
+
+    public String getDocumento() {
+        return documento;
     }
 }

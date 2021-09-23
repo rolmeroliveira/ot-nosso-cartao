@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,9 +39,8 @@ class PropostaControllerTest {
     @Test
     @DisplayName("deve cadastrar uma proposta com sucesso")
     void deveCadastrarUmaPropostaComSucesso() throws Exception {
-        String d = LocalDateTime.now().toString();
         PropostaRequest propostaRequest = new PropostaRequest();
-        propostaRequest.setDocumento("187.353.970-39");
+        propostaRequest.setDocumento("063.886.880-71");
         propostaRequest.setEndereco("Um endereço qualquer");
         propostaRequest.setEmail("umemail@email.com");
         propostaRequest.setNome("nome de uma pessoa");
@@ -59,7 +59,6 @@ class PropostaControllerTest {
     @Test
     @DisplayName("deve rejeitar uma proposta com cpf invalido")
     void deveRejeitarUmaPropostaComCpfInvalido() throws Exception{
-        String d = LocalDateTime.now().toString();
         PropostaRequest propostaRequest = new PropostaRequest();
         propostaRequest.setDocumento("770.385.507-10");
         propostaRequest.setEndereco("Um endereço qualquer");
@@ -76,15 +75,12 @@ class PropostaControllerTest {
                 .andExpect(jsonPath("$[0].field").value("documento"))
                 .andExpect(result -> assertTrue(result.getResolvedException()
                         instanceof org.springframework.web.bind.MethodArgumentNotValidException));
-
-
     }
 
 
     @Test
     @DisplayName("deve rejeitar uma proposta com cpf em branco")
     void deveRejeitarUmaPropostaComCpfEmBranco() throws Exception{
-        String d = LocalDateTime.now().toString();
         PropostaRequest propostaRequest = new PropostaRequest();
         propostaRequest.setDocumento("");
         propostaRequest.setEndereco("Um endereço qualquer");
@@ -98,7 +94,7 @@ class PropostaControllerTest {
 
         mvc.perform(request)
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("documento"))
+                .andExpect(jsonPath("$.[0]field").value("documento"))
                 .andExpect(result -> assertTrue(result.getResolvedException()
                         instanceof org.springframework.web.bind.MethodArgumentNotValidException));
 
@@ -108,7 +104,6 @@ class PropostaControllerTest {
     @Test
     @DisplayName("deve rejeitar uma proposta com endereco em branco")
     void deveRejeitarUmaPropostaComEnderecoEmBranco() throws Exception {
-        String d = LocalDateTime.now().toString();
         PropostaRequest propostaRequest = new PropostaRequest();
         propostaRequest.setDocumento("187.353.970-39");
         propostaRequest.setEndereco("");
@@ -131,7 +126,6 @@ class PropostaControllerTest {
     @Test
     @DisplayName("deve rejeitar uma proposta com salario zerado")
     void deveRejeitarUmaPropostaComSalarioZerado() throws Exception {
-        String d = LocalDateTime.now().toString();
         PropostaRequest propostaRequest = new PropostaRequest();
         propostaRequest.setDocumento("187.353.970-39");
         propostaRequest.setEndereco("Um endereco valido");
@@ -155,13 +149,7 @@ class PropostaControllerTest {
     @Test
     @DisplayName("deve rejeitar uma proposta com salario negativo")
     void deveRejeitarUmaPropostaComSalarionegativo() throws Exception {
-        String d = LocalDateTime.now().toString();
-        PropostaRequest propostaRequest = new PropostaRequest();
-        propostaRequest.setDocumento("187.353.970-39");
-        propostaRequest.setEndereco("Um endereco valido");
-        propostaRequest.setEmail("umemail@email.com");
-        propostaRequest.setNome("nome de uma pessoa");
-        propostaRequest.setSalario(new BigDecimal(-0.1));
+        PropostaRequest propostaRequest = propostaSalarioNegativo();
 
         MockHttpServletRequestBuilder request = post("/propostas")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -174,6 +162,57 @@ class PropostaControllerTest {
                         instanceof org.springframework.web.bind.MethodArgumentNotValidException));
 
     }
+
+
+
+
+    @Test
+    @DisplayName("deve rejeitar uma proposta com documento repetido")
+    void deveRejeitarUmaPropostaComDocumentoRepetido() throws Exception {
+        PropostaRequest propostaRequest1 = propostaOK();
+
+        //inserre a primeira vez. iss não dever gerar 422
+        MockHttpServletRequestBuilder request = post("/propostas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(propostaRequest1));
+        mvc.perform(request);
+
+        //Insere de novo o mesmo registro. Aqui o 422 tem que pipocar!
+        MockHttpServletRequestBuilder request2 = post("/propostas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(propostaRequest1));
+
+        mvc.perform(request2)
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.statusCode").value("422"))
+                .andExpect(result -> assertTrue(result.getResolvedException()
+                        instanceof SQLIntegrityConstraintViolationException));
+
+
+    }
+
+
+    private PropostaRequest propostaOK(){
+        PropostaRequest propostaRequest = new PropostaRequest();
+        propostaRequest.setDocumento("187.353.970-39");
+        propostaRequest.setEndereco("Um endereco valido");
+        propostaRequest.setEmail("umemail@email.com");
+        propostaRequest.setNome("nome de uma pessoa");
+        propostaRequest.setSalario(new BigDecimal(10.0));
+        return propostaRequest;
+    }
+
+    private PropostaRequest propostaSalarioNegativo(){
+        PropostaRequest propostaRequest = new PropostaRequest();
+        propostaRequest.setDocumento("187.353.970-39");
+        propostaRequest.setEndereco("Um endereco valido");
+        propostaRequest.setEmail("umemail@email.com");
+        propostaRequest.setNome("nome de uma pessoa");
+        propostaRequest.setSalario(new BigDecimal(-0.1));
+        return propostaRequest;
+    }
+
+
 
 
 }
