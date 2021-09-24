@@ -1,6 +1,8 @@
 package com.zup.nossocartao.proposta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zup.nossocartao.proposta.cartao.Cartao;
+import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.validacao.CpfOuCnpjValido;
 
 import javax.persistence.*;
@@ -50,15 +52,23 @@ public class Proposta {
     @Positive
     private BigDecimal salario;
 
+    @Enumerated(EnumType.STRING)
+    private StatusAssociaCartao status;
+
+    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "proposta")
+    private Cartao cartao;
+
+
     public Proposta() {
     }
 
-    public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
+    public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario, StatusAssociaCartao statusAssociaCartao) {
         this.documento = documento;
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+        this.status = statusAssociaCartao;
     }
 
     public Long getId() {
@@ -83,5 +93,17 @@ public class Proposta {
 
     public BigDecimal getSalario() {
         return salario;
+    }
+
+    public StatusAssociaCartao getStatus() {
+        return status;
+    }
+
+    public Cartao getCartao() {
+        return cartao;
+    }
+
+    public void vinculaCartao(Cartao cartao) {
+        this.cartao = cartao;
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zup.nossocartao.proposta.analise.AnalisePropostaClient;
 import com.zup.nossocartao.proposta.analise.AnaliseRequest;
 import com.zup.nossocartao.proposta.analise.AnaliseResponse;
+import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.repository.PropostaRepository;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class PropostaController {
 
     @PostMapping
     public ResponseEntity<PropostaResponse> adiconaOpiniao(@RequestBody @Valid PropostaRequest propostaRequest) throws SQLException, JsonProcessingException {
-        Proposta propostaModelo = propostaRequest.toModel();
+        //começa achando que vai dar tudo certo, mais adiante, a gente verifica se isso permanece...
+        StatusAssociaCartao statusAssociaCartao = StatusAssociaCartao.ELEGIVEL;
 
         //como o serviço que verifica a restrição não leva em conta o id da proposta, decidi
         //enviar antes da persistência, para não ter que fazer roolback. Só persisto se correr tudo bemn
@@ -39,8 +41,9 @@ public class PropostaController {
         //aproveito o resultado da análise financeira, para lançar um erro padrão já tratado
         //e interceptável pelo handler
         if (existeRestricao){
-            throw new SQLIntegrityConstraintViolationException("Sua proposta não pode ser encaminhada");
+            statusAssociaCartao = StatusAssociaCartao.NAO_ELEGIVEL;
         }
+        Proposta propostaModelo = propostaRequest.toModel(statusAssociaCartao);
 
         //Agora verifico se a psoposta já eixste, caso afirmativo, não permito cadastrar de novo
         Proposta propostaRepetida = propostaRepository.findByDocumento(propostaRequest.getDocumento());

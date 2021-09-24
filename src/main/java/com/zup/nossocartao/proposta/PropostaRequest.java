@@ -1,6 +1,7 @@
 package com.zup.nossocartao.proposta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.validacao.CpfOuCnpjValido;
 
 import javax.persistence.Column;
@@ -45,16 +46,18 @@ public class PropostaRequest {
     @Positive
     private BigDecimal salario;
 
+
     public PropostaRequest() {
     }
 
-    public Proposta toModel() {
+    public Proposta toModel(StatusAssociaCartao statusAssociaCartao) {
         Proposta proposta = new Proposta(
             this.documento,
             this.email,
             this.nome,
             this.endereco,
-            this.salario
+            this.salario,
+            statusAssociaCartao
         );
         return proposta;
     }
