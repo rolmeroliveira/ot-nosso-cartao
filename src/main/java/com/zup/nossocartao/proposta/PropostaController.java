@@ -49,7 +49,7 @@ public class PropostaController {
             propostaResponse  = new PropostaResponse(propostaModel);
             return ResponseEntity.status(HttpStatus.OK).body(propostaResponse);
         }catch(NullPointerException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
     }
