@@ -1,6 +1,7 @@
 package com.zup.nossocartao.proposta;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class PropostaResponse {
     //Aqui não tem validação. Não vou validar o dado que eu mesmo entrego

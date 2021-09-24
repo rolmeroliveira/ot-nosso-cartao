@@ -9,13 +9,17 @@ import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.repository.PropostaRepository;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+
 
 @RestController
 @RequestMapping("/propostas")
@@ -26,6 +30,29 @@ public class PropostaController {
     @Autowired
     AnalisePropostaClient analisePropostaClient;
 
+    @GetMapping(path ="/{criterio}")
+    public ResponseEntity<PropostaResponse> consultarProposta(@PathVariable  String criterio){
+
+        PropostaResponse propostaResponse;
+        Proposta propostaModel;
+
+        if (criterio.length() > 10) {
+            //enviou um critério com muitos caracteres - vai buscar por documento
+            propostaModel = propostaRepository.findByDocumento(criterio);
+        } else {
+            //Vai tentar localizar por id
+            Long id = Long.parseLong(criterio);
+            propostaModel = propostaRepository.getById(id);
+        }
+
+        try{
+            propostaResponse  = new PropostaResponse(propostaModel);
+            return ResponseEntity.status(HttpStatus.OK).body(propostaResponse);
+        }catch(NullPointerException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+    }
 
 
     @PostMapping
@@ -80,5 +107,9 @@ public class PropostaController {
             return true;
         }
     }
+
+
+
+
 
 }
