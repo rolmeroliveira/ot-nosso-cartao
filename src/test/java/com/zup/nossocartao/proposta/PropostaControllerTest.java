@@ -11,12 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import javax.swing.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -189,6 +191,18 @@ class PropostaControllerTest {
                         instanceof SQLIntegrityConstraintViolationException));
 
 
+    }
+
+    @Test
+    @DisplayName("deve rejeitar uma busca por id com criterio nao numerico")
+    void deveRejeitarUmaBuscaPorIdComCriterioNaoNumerico() throws Exception {
+
+        //inserre a primeira vez. iss não dever gerar 422
+        MockHttpServletRequestBuilder request = get("/propostas/aa")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest());
     }
 
 

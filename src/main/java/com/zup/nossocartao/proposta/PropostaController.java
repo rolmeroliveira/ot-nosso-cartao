@@ -33,16 +33,25 @@ public class PropostaController {
     @GetMapping(path ="/{criterio}")
     public ResponseEntity<PropostaResponse> consultarProposta(@PathVariable  String criterio){
 
+        //Aqui poderia ser incluída uma lógica que limitasse a consulta ao próprio proponente, ou a um
+        //Agente ou serviço autorizado a consultar propostas de terceiros (tipo um gerente de banco)
+
         PropostaResponse propostaResponse;
         Proposta propostaModel;
 
         if (criterio.length() > 10) {
             //enviou um critério com muitos caracteres - vai buscar por documento
+            String documento = criterio;
             propostaModel = propostaRepository.findByDocumento(criterio);
         } else {
-            //Vai tentar localizar por id
-            Long id = Long.parseLong(criterio);
-            propostaModel = propostaRepository.getById(id);
+            //Vai tentar localizar por id, mas pode ter enviado uma sequencia curta, que não pode ser convertida em número
+            //Dava pra fazer mais sofisticado, enviando uma msg amigável pro cliente, usando um handler, mas não houve tempo
+            try{
+                Long id = Long.parseLong(criterio);
+                propostaModel = propostaRepository.getById(id);
+            }catch(NumberFormatException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
         }
 
         try{
