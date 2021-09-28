@@ -41,12 +41,11 @@ class PropostaControllerTest {
     @Test
     @DisplayName("deve cadastrar uma proposta com sucesso")
     void deveCadastrarUmaPropostaComSucesso() throws Exception {
-        PropostaRequest propostaRequest = new PropostaRequest();
-        propostaRequest.setDocumento("063.886.880-71");
-        propostaRequest.setEndereco("Um endereço qualquer");
-        propostaRequest.setEmail("umemail@email.com");
-        propostaRequest.setNome("nome de uma pessoa");
-        propostaRequest.setSalario(new BigDecimal(3200.44));
+        PropostaRequest propostaRequest = new PropostaRequest("063.886.880-71",
+                "umemail@email.com",
+                "nome de uma pessoa",
+                "Um endereço qualquer",
+                new BigDecimal(3200.44));
 
         MockHttpServletRequestBuilder request = post("/propostas")
                 .contentType(MediaType.APPLICATION_JSON)

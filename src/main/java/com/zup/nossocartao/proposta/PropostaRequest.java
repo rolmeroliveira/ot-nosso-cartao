@@ -50,6 +50,14 @@ public class PropostaRequest {
     public PropostaRequest() {
     }
 
+    public PropostaRequest(String documento, String email, String nome, String endereco, BigDecimal salario) {
+        this.documento = documento;
+        this.email = email;
+        this.nome = nome;
+        this.endereco = endereco;
+        this.salario = salario;
+    }
+
     public Proposta toModel(StatusAssociaCartao statusAssociaCartao) {
         Proposta proposta = new Proposta(
             this.documento,

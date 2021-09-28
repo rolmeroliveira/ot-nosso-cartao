@@ -8,10 +8,11 @@ import com.zup.nossocartao.proposta.analise.AnaliseResponse;
 import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.repository.PropostaRepository;
 import feign.FeignException;
+import org.hibernate.dialect.function.AbstractAnsiTrimEmulationFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,6 +28,7 @@ public class PropostaController {
 
     @Autowired
     PropostaRepository propostaRepository;
+
     @Autowired
     AnalisePropostaClient analisePropostaClient;
 
@@ -65,55 +67,53 @@ public class PropostaController {
 
 
     @PostMapping
-    public ResponseEntity<PropostaResponse> adiconaOpiniao(@RequestBody @Valid PropostaRequest propostaRequest) throws SQLException, JsonProcessingException {
-        //começa achando que vai dar tudo certo, mais adiante, a gente verifica se isso permanece...
-        StatusAssociaCartao statusAssociaCartao = StatusAssociaCartao.ELEGIVEL;
+    public ResponseEntity<String> adiconarProposta(@RequestBody @Valid PropostaRequest propostaRequest) throws SQLException, JsonProcessingException {
 
-        //como o serviço que verifica a restrição não leva em conta o id da proposta, decidi
-        //enviar antes da persistência, para não ter que fazer roolback. Só persisto se correr tudo bemn
-        //com a anãlise financeira
-        boolean existeRestricao = temRestricaoFinanceira(propostaRequest);
+        StatusAssociaCartao statusAssociaCartao =  varificarStatusProposta(propostaRequest);
+        boolean propostaRepetida = isPropostaRepetida(propostaRequest);
 
-        //aproveito o resultado da análise financeira, para lançar um erro padrão já tratado
-        //e interceptável pelo handler
-        if (existeRestricao){
-            statusAssociaCartao = StatusAssociaCartao.NAO_ELEGIVEL;
+        //Pode ter dado alguma falha na conexao do feigin...
+        if (statusAssociaCartao == StatusAssociaCartao.NAO_VERIFICADA){
+            //Não vou inserir uma proposta sem estar completa
+            throw new SQLIntegrityConstraintViolationException("Falha na verificação dos dados. Tente mais tarde");
         }
-        Proposta propostaModelo = propostaRequest.toModel(statusAssociaCartao);
 
-        //Agora verifico se a psoposta já eixste, caso afirmativo, não permito cadastrar de novo
-        Proposta propostaRepetida = propostaRepository.findByDocumento(propostaRequest.getDocumento());
-        if (propostaRepetida != null){
+        //a proposta já pode ter sido inserida antes
+        if (propostaRepetida){
+            //Repetida não vale!
             throw new SQLIntegrityConstraintViolationException("Já existe uma proposta para este documento");
         }
 
+        //crio um objeto do modelo pra persistir
+        Proposta propostaModelo = propostaRequest.toModel(statusAssociaCartao);
+        //persisto em uma instrução separada. Vamos pensar em quem vai ler...
         Proposta propostaSalva = propostaRepository.save(propostaModelo);
-        PropostaResponse propostaResponse = new PropostaResponse(propostaSalva);
-        return ResponseEntity.created(URI.create("/propostas")).body(propostaResponse);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Poposta inserida com êxito");
     }
 
+    //só pra isolar esta checagem
+    private boolean isPropostaRepetida(PropostaRequest propostaRequest) {
+        Proposta propostaRepetida = propostaRepository.findByDocumento(propostaRequest.getDocumento());
+        return (propostaRepetida != null);
+    }
 
-
-    //Este método usa o feign client para retornar um objeto que indica se a proposta tem ou não
-    //restriçoes financeiras. A lógica do serviço consultado está hardcoded, definindo que se o documento
-    //passado começa com 3, tem restrição, caso contrário, não tem restrição
-    private boolean temRestricaoFinanceira(PropostaRequest propostaRequest) throws JsonProcessingException {
+    //Retorna três possíveis status: Elegivel, Nao elegivel, ou o feign não conseguiu checar
+    private StatusAssociaCartao varificarStatusProposta(PropostaRequest propostaRequest)  {
         AnaliseRequest analiseRequest = new AnaliseRequest(propostaRequest);
         AnaliseResponse analiseResponse;
 
-
+        //o feign falho em conectar com o banco. Deu algo errado fora da minha api
         try {
             analiseResponse = analisePropostaClient.analisar(analiseRequest);
         }catch (FeignException e){
-            ObjectMapper objectMapper = new ObjectMapper();
-            analiseResponse = objectMapper.readValue(e.contentUTF8(), AnaliseResponse.class);
+            return StatusAssociaCartao.NAO_VERIFICADA;
         }
-        analiseResponse  = analiseResponse;
 
         if (analiseResponse.getResultadoSolicitacao().equals("SEM_RESTRICAO")){
-            return false;
+            return StatusAssociaCartao.NAO_ELEGIVEL;
         }else{
-            return true;
+            return StatusAssociaCartao.ELEGIVEL;
         }
     }
 
