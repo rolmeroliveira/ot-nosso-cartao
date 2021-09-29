@@ -70,44 +70,13 @@ public class PropostaRequest {
         return proposta;
     }
 
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
-    public void setSalario(BigDecimal salario) {
-        this.salario = salario;
-    }
 
     public String getDocumento() {
         return documento;
     }
 
 
-    public String getEmail() {
-        return email;
-    }
-
     public String getNome() {
         return nome;
-    }
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public BigDecimal getSalario() {
-        return salario;
     }
 }

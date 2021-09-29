@@ -1,23 +1,18 @@
 package com.zup.nossocartao.proposta;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zup.nossocartao.proposta.analise.AnalisePropostaClient;
 import com.zup.nossocartao.proposta.analise.AnaliseRequest;
 import com.zup.nossocartao.proposta.analise.AnaliseResponse;
 import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.repository.PropostaRepository;
 import feign.FeignException;
-import org.hibernate.dialect.function.AbstractAnsiTrimEmulationFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
-
-
 import javax.validation.Valid;
-import java.net.URI;
+
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -103,7 +98,7 @@ public class PropostaController {
         AnaliseRequest analiseRequest = new AnaliseRequest(propostaRequest);
         AnaliseResponse analiseResponse;
 
-        //o feign falho em conectar com o banco. Deu algo errado fora da minha api
+        //o feign falhou em conectar com o banco. Deu algo errado fora da minha api
         try {
             analiseResponse = analisePropostaClient.analisar(analiseRequest);
         }catch (FeignException e){
@@ -111,9 +106,9 @@ public class PropostaController {
         }
 
         if (analiseResponse.getResultadoSolicitacao().equals("SEM_RESTRICAO")){
-            return StatusAssociaCartao.NAO_ELEGIVEL;
-        }else{
             return StatusAssociaCartao.ELEGIVEL;
+        }else{
+            return StatusAssociaCartao.NAO_ELEGIVEL;
         }
     }
 
