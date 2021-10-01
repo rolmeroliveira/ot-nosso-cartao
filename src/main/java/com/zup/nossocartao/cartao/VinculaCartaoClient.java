@@ -7,6 +7,4 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface VinculaCartaoClient {
         @PostMapping
         VinculaCartaoResponse associaCartao(VinculaCartaoRequest request);
-
-
 }

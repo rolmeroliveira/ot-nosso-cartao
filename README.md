@@ -1,9 +1,5 @@
-# Aqui eu botei tem pratica um monte de coisa legais
+# Hora de dar o troco!
 
-### Tratamento de exceptions personalizado!
-### checagem da existencia do cartao!
-### Mensagens adqueadas a cada contexto!
-### Inclusao do atributo cpf no user do Keycloak
-##Protecao total das bordas!
+### Depois de mais de uma dácada chutando as costelas do java, não ia ser o optional que ia continuar me batendo covardemente!
 
-## Agradecimentos ao Alysson, pela dica de como incluir atributos no user do Keycloak
+## Obrigado Paula Macedo!
