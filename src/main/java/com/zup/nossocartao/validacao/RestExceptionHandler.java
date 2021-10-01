@@ -40,4 +40,19 @@ public class RestExceptionHandler {
         return new StandardError(LocalDateTime.now(), HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.toString(),
                 exception.getLocalizedMessage());
     }
+
+    @ExceptionHandler(CustomNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public StandardError handleCustomNotFoundException(CustomNotFoundException exception) {
+        return new StandardError(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.toString(),
+                exception.getMsg());
+    }
+
+    @ExceptionHandler(CustomBusinesException.class)
+    @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
+    public StandardError handleCustomNotOwnerException(CustomBusinesException exception) {
+        return new StandardError(LocalDateTime.now(), HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                exception.getMsg());
+    }
+
 }

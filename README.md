@@ -1,6 +1,9 @@
-# Caro avaliador
+# Aqui eu botei tem pratica um monte de coisa legais
 
-## Se puder dar um feed back do meus testes, vai ser massa!
+### Tratamento de exceptions personalizado!
+### checagem da existencia do cartao!
+### Mensagens adqueadas a cada contexto!
+### Inclusao do atributo cpf no user do Keycloak
+##Protecao total das bordas!
 
-
-### Testes foi uma grande pedra no meu sapato, que eu venho tentando tirar o tempo todo! Se puder me ajudar a melhorar, fico muito feliz
+## Agradecimentos ao Alysson, pela dica de como incluir atributos no user do Keycloak

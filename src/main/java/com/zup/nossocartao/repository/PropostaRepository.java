@@ -1,7 +1,7 @@
 package com.zup.nossocartao.repository;
 
 import com.zup.nossocartao.proposta.Proposta;
-import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
+import com.zup.nossocartao.cartao.StatusAssociaCartao;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.zup.nossocartao.proposta.cartao;
+package com.zup.nossocartao.cartao;
 
 public enum StatusAssociaCartao {
         NAO_ELEGIVEL,

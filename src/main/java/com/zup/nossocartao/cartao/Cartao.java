@@ -1,6 +1,8 @@
-package com.zup.nossocartao.proposta.cartao;
+package com.zup.nossocartao.cartao;
 
 import com.zup.nossocartao.biometria.Biometria;
+import com.zup.nossocartao.bloqueios.BloqueioCartao;
+import com.zup.nossocartao.bloqueios.BloqueioCartaoStatus;
 import com.zup.nossocartao.proposta.Proposta;
 
 
@@ -33,7 +35,11 @@ public class Cartao {
         private BigDecimal limite;
 
         @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
-        private List<Biometria> Biometrias = new ArrayList<>();
+        private List<Biometria> biometrias = new ArrayList<>();
+
+        @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
+        private List<BloqueioCartao> bloqueios = new ArrayList<>();
+
 
         @Deprecated
         public Cartao() {
@@ -46,7 +52,6 @@ public class Cartao {
                 this.emititdoEm = emititdoEm;
                 this.limite = limite;
         }
-
 
         public Long getId() {
                 return id;
@@ -68,10 +73,21 @@ public class Cartao {
                 return limite;
         }
 
-        public List<Biometria> getBiometrias() {
-                return Biometrias;
+        public List<Biometria> getbiometrias() {
+                return biometrias;
         }
 
+        public void addBloqueioCartao (BloqueioCartao bloqueioCartao){
+                this.bloqueios.add(bloqueioCartao);
+        }
 
+        public boolean isBloqeuado(){
+                for (BloqueioCartao b : bloqueios) {
+                        if (b.getBloqueioCartaoStatus() == BloqueioCartaoStatus.ATIVO) {
+                                return true;
+                        }
+                }
+                return false;
+        }
 
 }

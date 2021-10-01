@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zup.nossocartao.proposta.analise.AnalisePropostaClient;
 import com.zup.nossocartao.proposta.analise.AnaliseRequest;
 import com.zup.nossocartao.proposta.analise.AnaliseResponse;
-import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
+import com.zup.nossocartao.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.repository.PropostaRepository;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;

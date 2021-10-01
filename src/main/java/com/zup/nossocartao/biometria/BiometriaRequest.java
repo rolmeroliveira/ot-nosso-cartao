@@ -1,5 +1,5 @@
 package com.zup.nossocartao.biometria;
-import com.zup.nossocartao.proposta.cartao.Cartao;
+import com.zup.nossocartao.cartao.Cartao;
 
 import javax.validation.constraints.NotBlank;
 

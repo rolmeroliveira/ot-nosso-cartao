@@ -1,8 +1,8 @@
 package com.zup.nossocartao.proposta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zup.nossocartao.proposta.cartao.Cartao;
-import com.zup.nossocartao.proposta.cartao.StatusAssociaCartao;
+import com.zup.nossocartao.cartao.Cartao;
+import com.zup.nossocartao.cartao.StatusAssociaCartao;
 import com.zup.nossocartao.validacao.CpfOuCnpjValido;
 
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package com.zup.nossocartao.proposta.cartao;
+package com.zup.nossocartao.cartao;
 
 
 import com.zup.nossocartao.proposta.Proposta;

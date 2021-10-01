@@ -1,7 +1,7 @@
 package com.zup.nossocartao.proposta;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zup.nossocartao.proposta.cartao.Cartao;
+import com.zup.nossocartao.cartao.Cartao;
 import com.zup.nossocartao.repository.CartaoRepository;
 import com.zup.nossocartao.repository.PropostaRepository;
 import org.junit.jupiter.api.Assertions;

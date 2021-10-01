@@ -1,7 +1,7 @@
 package com.zup.nossocartao.biometria;
 
 
-import com.zup.nossocartao.proposta.cartao.Cartao;
+import com.zup.nossocartao.cartao.Cartao;
 import com.zup.nossocartao.repository.CartaoRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 
