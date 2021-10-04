@@ -1,6 +1,7 @@
 package com.zup.nossocartao.proposta;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zup.nossocartao.metricas.MetricasNossoCartao;
 import com.zup.nossocartao.proposta.analise.AnalisePropostaClient;
 import com.zup.nossocartao.proposta.analise.AnaliseRequest;
 import com.zup.nossocartao.proposta.analise.AnaliseResponse;
@@ -26,6 +27,9 @@ public class PropostaController {
 
     @Autowired
     AnalisePropostaClient analisePropostaClient;
+
+    @Autowired
+    MetricasNossoCartao metricasNossoCartao;
 
     @GetMapping(path ="/{criterio}")
     public ResponseEntity<PropostaResponse> consultarProposta(@PathVariable  String criterio){
@@ -84,6 +88,7 @@ public class PropostaController {
         //persisto em uma instrução separada. Vamos pensar em quem vai ler...
         Proposta propostaSalva = propostaRepository.save(propostaModelo);
 
+        this.metricasNossoCartao.contatdorDePropostas();
         return ResponseEntity.status(HttpStatus.CREATED).body("Poposta inserida com êxito");
     }
 
@@ -105,6 +110,8 @@ public class PropostaController {
             return StatusAssociaCartao.NAO_VERIFICADA;
         }
 
+
+        this.metricasNossoCartao.contatdorDePropostas();
         if (analiseResponse.getResultadoSolicitacao().equals("SEM_RESTRICAO")){
             return StatusAssociaCartao.ELEGIVEL;
         }else{
