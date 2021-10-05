@@ -1,5 +1,5 @@
-# Hora de dar o troco!
+# Vacilei na validação!
 
-### Depois de mais de uma dácada chutando as costelas do java, não ia ser o optional que ia continuar me batendo covardemente!
+### Esqueci de anotar o body da request com @Valid no controller!
 
-## Obrigado Paula Macedo!
+## Por causa disso fiz outro push

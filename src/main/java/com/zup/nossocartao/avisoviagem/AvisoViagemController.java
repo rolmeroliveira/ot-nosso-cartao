@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -27,7 +28,7 @@ public class AvisoViagemController {
     CartaoRepository cartaoRepository;
 
     @PostMapping(path = "/{numeroCartao}")
-    public ResponseEntity<AvisoViagemResponse> criar(@PathVariable String numeroCartao, @RequestBody AvisoViagemRequest avisoViagemRequest,  HttpServletRequest request){
+    public ResponseEntity<AvisoViagemResponse> criar(@PathVariable String numeroCartao, @RequestBody @Valid AvisoViagemRequest avisoViagemRequest, HttpServletRequest request){
         String ipClient = HttpUtilidades.itemDaRequest(request, ItemDaRequest.IP_ORIGEM);
         String user_agent = HttpUtilidades.itemDaRequest(request, ItemDaRequest.USER_AGENT);
         String idCartao = numeroCartao; //avisoViagemRequest.getIdentificadorCartao();
