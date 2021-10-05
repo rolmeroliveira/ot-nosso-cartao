@@ -79,4 +79,6 @@ public class PropostaRequest {
     public String getNome() {
         return nome;
     }
+
+
 }

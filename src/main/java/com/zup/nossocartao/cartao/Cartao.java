@@ -1,5 +1,7 @@
 package com.zup.nossocartao.cartao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zup.nossocartao.avisoviagem.AvisoViagem;
 import com.zup.nossocartao.biometria.Biometria;
 import com.zup.nossocartao.bloqueios.BloqueioCartao;
 import com.zup.nossocartao.bloqueios.BloqueioCartaoStatus;
@@ -40,11 +42,13 @@ public class Cartao {
         @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
         private List<BloqueioCartao> bloqueios = new ArrayList<>();
 
+        @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
+        private List<AvisoViagem> avisosViagem = new ArrayList<>();
 
         @Deprecated
+
         public Cartao() {
         }
-
 
         public Cartao(Proposta proposta, String numero, LocalDateTime emititdoEm, BigDecimal limite) {
                 this.proposta = proposta;
@@ -79,6 +83,10 @@ public class Cartao {
 
         public void addBloqueioCartao (BloqueioCartao bloqueioCartao){
                 this.bloqueios.add(bloqueioCartao);
+        }
+
+        public void addAvisoViagem (AvisoViagem avisoViagem){
+                this.avisosViagem.add(avisoViagem);
         }
 
         public boolean isBloqeuado(){

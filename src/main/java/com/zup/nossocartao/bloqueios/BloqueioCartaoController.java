@@ -4,6 +4,8 @@ package com.zup.nossocartao.bloqueios;
 import com.zup.nossocartao.cartao.Cartao;
 import com.zup.nossocartao.proposta.analise.AnalisePropostaClient;
 import com.zup.nossocartao.repository.CartaoRepository;
+import com.zup.nossocartao.utilidades.HttpUtilidades;
+import com.zup.nossocartao.utilidades.ItemDaRequest;
 import com.zup.nossocartao.validacao.CustomBusinesException;
 import com.zup.nossocartao.validacao.CustomNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,8 @@ public class BloqueioCartaoController {
         String numeroCartao = cartaoParaBloquear.getNumero();
 
         String documentoUsuarioLogado = (String) jwt.getClaims().get("cpf");
-        String ipOrigemReqisicao = request.getRemoteAddr();
-        String userAgentRequisicao = request.getHeader(HttpHeaders.USER_AGENT);
+        String ipOrigemReqisicao = HttpUtilidades.itemDaRequest(request, ItemDaRequest.IP_ORIGEM);
+        String userAgentRequisicao = HttpUtilidades.itemDaRequest(request, ItemDaRequest.USER_AGENT);
 
         var cartaoPertenceAoUsuarioLogado = cartaoParaBloquear.getProposta().getDocumento().equals(documentoUsuarioLogado);
 
