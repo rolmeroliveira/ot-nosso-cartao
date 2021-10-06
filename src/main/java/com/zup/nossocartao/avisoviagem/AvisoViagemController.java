@@ -1,5 +1,7 @@
 package com.zup.nossocartao.avisoviagem;
 
+import com.zup.nossocartao.bloqueios.BloqueioCartaoAvisoRequest;
+import com.zup.nossocartao.bloqueios.BloqueioCartaoAvisoResponse;
 import com.zup.nossocartao.cartao.Cartao;
 import com.zup.nossocartao.repository.AvisoViagemRepository;
 import com.zup.nossocartao.repository.CartaoRepository;
@@ -25,10 +27,13 @@ public class AvisoViagemController {
     @Autowired
     AvisoViagemRepository avisoViagemRepository;
     @Autowired
+    AvisoViagemClient avisoViagemClient;
+
+    @Autowired
     CartaoRepository cartaoRepository;
 
     @PostMapping(path = "/{numeroCartao}")
-    public ResponseEntity<AvisoViagemResponse> criar(@PathVariable String numeroCartao, @RequestBody @Valid AvisoViagemRequest avisoViagemRequest, HttpServletRequest request){
+    public ResponseEntity<String> criar(@PathVariable String numeroCartao, @RequestBody @Valid AvisoViagemRequest avisoViagemRequest, HttpServletRequest request){
         String ipClient = HttpUtilidades.itemDaRequest(request, ItemDaRequest.IP_ORIGEM);
         String user_agent = HttpUtilidades.itemDaRequest(request, ItemDaRequest.USER_AGENT);
         String idCartao = numeroCartao; //avisoViagemRequest.getIdentificadorCartao();
@@ -39,9 +44,16 @@ public class AvisoViagemController {
 
         AvisoViagem avisoViagem = avisoViagemRequest.toModel(cartao, ipClient, user_agent);
         cartao.addAvisoViagem(avisoViagem);
-        cartaoRepository.save(cartao);
-        AvisoViagemResponse avisoViagemResponse = new AvisoViagemResponse(avisoViagem);
-        return ResponseEntity.status(HttpStatus.CREATED).body(avisoViagemResponse);
+
+        boolean conseguiuAvisarSistemaLegado =  avisaViagemSistemaLegado(avisoViagem);
+
+        if(conseguiuAvisarSistemaLegado) {
+            cartaoRepository.save(cartao);
+            AvisoViagemResponse avisoViagemResponse = new AvisoViagemResponse(avisoViagem);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Aviso de viagem criado com sucesso");
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Falha na propagação das informações. Aviso não efetuado ");
+        }
     }
 
 
@@ -57,6 +69,20 @@ public class AvisoViagemController {
     }
 
 
+    private boolean avisaViagemSistemaLegado (AvisoViagem avisoViagem){
+        String numeroCartao = avisoViagem.getCartao().getNumero();
+        String destino = avisoViagem.getDestino();
+        String dataForamtada = avisoViagem.getDataTerminoViagem().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
+        AvisoViagemAvisoRequest ar = new AvisoViagemAvisoRequest(destino, dataForamtada);
+        AvisoViagemAvisoResponse avar =  avisoViagemClient.avisarSistemalegado(numeroCartao, ar);
+        String resuiltadoAviso = avar.getResultado();
+
+        if (resuiltadoAviso.equals("CRIADO")){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 }

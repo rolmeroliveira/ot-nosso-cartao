@@ -2,11 +2,10 @@ package com.zup.nossocartao.avisoviagem;
 
 import com.zup.nossocartao.cartao.Cartao;
 
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+
 
 public class AvisoViagemRequest {
 
@@ -15,7 +14,6 @@ public class AvisoViagemRequest {
     @NotNull
     private String destino;
     @NotNull
-    @Future(message = "A data do fim da viagem precisa ser futura")
     private String dataTerminoViagem;
 
     public AvisoViagemRequest() {
