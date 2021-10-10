@@ -5,6 +5,7 @@ import com.zup.nossocartao.avisoviagem.AvisoViagem;
 import com.zup.nossocartao.biometria.Biometria;
 import com.zup.nossocartao.bloqueios.BloqueioCartao;
 import com.zup.nossocartao.bloqueios.BloqueioCartaoStatus;
+import com.zup.nossocartao.carteira.AssociacaoCartaoCarteira;
 import com.zup.nossocartao.proposta.Proposta;
 
 
@@ -45,8 +46,11 @@ public class Cartao {
         @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
         private List<AvisoViagem> avisosViagem = new ArrayList<>();
 
-        @Deprecated
+        @OneToOne(mappedBy = "cartao", cascade = CascadeType.ALL)
+        private AssociacaoCartaoCarteira carteiraAssociada;
 
+
+        @Deprecated
         public Cartao() {
         }
 
@@ -96,6 +100,10 @@ public class Cartao {
                         }
                 }
                 return false;
+        }
+
+        public void  associarCartaoAUmaCarteira(AssociacaoCartaoCarteira associacaoCartaoCarteira){
+                this.carteiraAssociada = associacaoCartaoCarteira;
         }
 
 }
