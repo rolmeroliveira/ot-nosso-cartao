@@ -1,0 +1,20 @@
+spring:
+    datasource:
+        driver-class-name: org.h2.Driver
+        password: 123456
+        url: jdbc:h2:mem:testdb
+        username: sa
+    h2:
+        console:
+            enabled: true
+            path: /h2
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                format_sql: true
+                dialect: org.hibernate.dialect.H2Dialect
+
+
+periodicidade-vincula-cartao: ${PERIODICIDADE_VINCULA_CARTAO:2000}

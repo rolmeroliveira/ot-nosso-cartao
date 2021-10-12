@@ -21,7 +21,7 @@ public class VinculaCartaoProposta {
         this.vinculaCartaoClient = vinculaCartaoClient;
     }
 
-    @Scheduled(fixedDelayString = "${periodicidade.vincula-cartao}")
+    @Scheduled(fixedDelayString = "${periodicidade-vincula-cartao}")
     public void vincula() {
 
         List<Proposta> propostas = propostaRepository.findBystatusAndCartaoIsNull(StatusAssociaCartao.ELEGIVEL);

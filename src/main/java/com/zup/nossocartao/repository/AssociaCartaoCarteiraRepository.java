@@ -10,4 +10,5 @@ public interface AssociaCartaoCarteiraRepository  extends JpaRepository<Associac
 
     Optional<AssociacaoCartaoCarteira> findByCartao(Cartao cartao);
 
+
 }

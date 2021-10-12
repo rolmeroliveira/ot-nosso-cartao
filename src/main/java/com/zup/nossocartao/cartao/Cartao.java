@@ -46,7 +46,8 @@ public class Cartao {
         @OneToMany(mappedBy = "cartao", cascade = CascadeType.ALL)
         private List<AvisoViagem> avisosViagem = new ArrayList<>();
 
-        @OneToOne(mappedBy = "cartao", cascade = CascadeType.ALL)
+        @OneToOne(cascade = CascadeType.ALL)
+        @JoinColumn(name = "cartao_id", referencedColumnName = "id")
         private AssociacaoCartaoCarteira carteiraAssociada;
 
 

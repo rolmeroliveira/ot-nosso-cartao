@@ -11,10 +11,9 @@ public class AssociacaoCartaoCarteira {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToOne
+    @OneToOne(mappedBy = "carteiraAssociada")
     private Cartao cartao;
     private String carteira;
-
 
     private String ipAssociacao;
     private  String userAgentAssociacao;
@@ -28,6 +27,10 @@ public class AssociacaoCartaoCarteira {
         this.carteira = carteira;
         this.ipAssociacao = ipAssociacao;
         this.userAgentAssociacao = userAgentAssociacao;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Cartao getCartao() {

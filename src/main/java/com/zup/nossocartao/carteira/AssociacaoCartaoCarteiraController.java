@@ -52,7 +52,7 @@ public class AssociacaoCartaoCarteiraController {
         verificaSeEmailInformadoPertenceAoCartao(cartao,  emailRecebidoNoRequest);
 
         //tenta fazer a vinculação no sistema bancário
-        associaNoSistemaBancario(numeroCartao, carteiraRecebidaNoRequest,emailRecebidoNoRequest);
+        associaNoSistemaBancario(numeroCartao, carteiraRecebidaNoRequest, emailRecebidoNoRequest);
 
         //cria um objeto que representa a associacao do cartao com a careira desejada
         AssociacaoCartaoCarteira associacaoCartaoCarteira = associacaoCartaoCarteiraRequest.toModel(cartao, ipClient, user_agent);
@@ -84,6 +84,12 @@ public class AssociacaoCartaoCarteiraController {
 
     //Solicita associação do cartão ao sistema bancário - API de terceiros
     private void associaNoSistemaBancario (String numeroCartao, String carteira, String email){
+        //como o sistema bancário nõa parece fazer crítica alguma, quanto à string passada para
+        //associar um cartão, coloquei esse teste, pra não diexar envar qualquer coisa
+        if(carteira != "Paypal" && carteira != "Samsung Pay"){
+            throw new CustomBusinesException("carteira", "Nome da carteira fornecido invalido");
+        }
+
         AssociaCartaoCarteiraBancoRequest accbReq = new AssociaCartaoCarteiraBancoRequest(email, carteira);
         AssociaCartaoCarteiraBancoResponse accbResp =  associacaoCartaoCarteiraClient.requisitaAssociacaoSistemaBancario(numeroCartao, accbReq);
         String resultadoAssociacao = accbResp.getResultado();

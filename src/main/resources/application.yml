@@ -1,0 +1,30 @@
+management:
+    endpoints:
+        prometheus:
+            enabled: true
+        web:
+            exposure:
+                include: info, health, metrics, prometheus
+    metrics:
+        tags:
+            ambiente: ${AMBIENTE:desenvolvimento}
+            aplicacao: ${NOME_DA_APLICACAO:serviço de proposta}
+
+periodicidade-vincula-cartao: ${PERIODICIDADE_VINCULA_CARTAO:2000}
+
+spring:
+    datasource:
+        password: root
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/nossocartao
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: false
+
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/auth/realms/nosso-cartao}
+                    jwk-set-uri: ${KEYCLOAK_JWKS_URI:http://localhost:18080/auth/realms/nosso-cartao/protocol/openid-connect/certs}

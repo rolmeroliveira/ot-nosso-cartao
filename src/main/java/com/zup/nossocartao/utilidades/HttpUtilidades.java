@@ -1,7 +1,5 @@
 package com.zup.nossocartao.utilidades;
 
-import org.springframework.http.HttpRequest;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class HttpUtilidades {

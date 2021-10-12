@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zup.nossocartao.cartao.Cartao;
 import com.zup.nossocartao.repository.CartaoRepository;
 import com.zup.nossocartao.repository.PropostaRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import jdk.jfr.Enabled;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import java.math.BigDecimal;
@@ -24,21 +26,42 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Transactional
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class PropostaControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private PropostaRepository propostaRepository;
     @Autowired
     private CartaoRepository cartaoRepository;
 
 
+
+
+    @BeforeEach
+    void limpaDadosDeTeste() {
+        //encontro a proposta fake usada pra teste
+        Proposta p = propostaRepository.findByDocumento("795.658.760-30");
+        //encontro o cartao vinculado á proposta (se proposta é de teste, cartao também é)
+        Cartao c = null;
+        if (p != null) {
+            c = cartaoRepository.findByProposta_Id(p.getId());
+        }
+        //deleto ambos, pra não impedir o test de criação
+        if (c != null) cartaoRepository.deleteById(c.getId());
+        if (p != null) propostaRepository.deleteById(p.getId());
+    }
+
+
+
     //O cpf usado para teste, foi dinamicamente gerado por um serviço gerador de cpf
     //o ducomento não corresponde a um cadastro real de contribuinte, portanto, não expõe
     //dados pessoais
+
+    //Este teste somente passa, se os containers fornecidods para o desafio estiverem rodando
+
     @Test
     @DisplayName("deve cadastrar uma proposta com sucesso")
     void deveCadastrarUmaPropostaComSucesso() throws Exception {
@@ -182,21 +205,6 @@ class PropostaControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-
-
-    @Test
-    void limpaDadosDeTeste() {
-        //encontro a proposta fake usada pra teste
-        Proposta p = propostaRepository.findByDocumento("795.658.760-30");
-        //encontro o cartao vinculado á proposta (se proposta é de teste, cartao também é)
-        Cartao c = null;
-        if (p != null) {
-            c = cartaoRepository.findByProposta_Id(p.getId());
-        }
-        //deleto ambos, pra não impedir o test de criação
-        if (c != null) cartaoRepository.deleteById(c.getId());
-        if (p != null) propostaRepository.deleteById(p.getId());
-    }
 
     private PropostaRequest gerarPropostaRequestParaTeste(){
         //Crio uma porposta somente para teste
