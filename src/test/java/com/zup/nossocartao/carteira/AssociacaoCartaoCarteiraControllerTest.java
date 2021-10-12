@@ -111,6 +111,8 @@ class AssociacaoCartaoCarteiraControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(accbr));
 
+        //Retorno previsível, por causa da exception customicada aplicada ao método que faz
+        //a associacao com a carteira no sistema bancario
         mvc.perform(request)
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof CustomBusinesException));
