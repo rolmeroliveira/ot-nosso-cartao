@@ -1,16 +1,14 @@
 management:
     endpoints:
-        prometheus:
-            enabled: true
         web:
             exposure:
-                include: info, health, metrics, prometheus
+                include: info,health,prometheus
+        prometheus:
+            enabled: true
     metrics:
         tags:
-            ambiente: ${AMBIENTE:desenvolvimento}
-            aplicacao: ${NOME_DA_APLICACAO:serviço de proposta}
-
-periodicidade-vincula-cartao: ${PERIODICIDADE_VINCULA_CARTAO:2000}
+            aplicacao: ${NOME_DA_APLICACAO:nosso-cartao}
+            ambiente: ${AMBIENTE:dev}
 
 spring:
     datasource:
@@ -21,10 +19,31 @@ spring:
         hibernate:
             ddl-auto: update
         show-sql: false
-
     security:
         oauth2:
             resourceserver:
                 jwt:
                     issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:18080/auth/realms/nosso-cartao}
                     jwk-set-uri: ${KEYCLOAK_JWKS_URI:http://localhost:18080/auth/realms/nosso-cartao/protocol/openid-connect/certs}
+
+opentracing:
+    jaeger:
+        enabled: ${JAEGER_ENABLED:true}
+        service-name: ${NOME_DA_APLICACAO:nosso-cartao}
+        http-sender:
+            url: ${JAEGER_ENDPOINT:http://localhost:14268/api/traces}
+        probabilistic-sampler:
+            sampling-rate: ${JAEGER_SAMPLER:1}
+
+feign:
+    client:
+        analiseProposta:
+            url: ${URL_FINANCEIRO:http://localhost:9999/api/solicitacao}
+        vincula-cartao:
+            url: ${URL_CARTOES:http://localhost:8888/api/cartoes}
+
+server:
+    port: ${SERVER_PORT:8080}
+
+
+periodicidade-vincula-cartao: ${PERIODICIDADE_VINCULA_CARTAO:2000}
