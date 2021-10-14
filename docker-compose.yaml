@@ -82,6 +82,38 @@ services:
       LOG_LEVEL: INFO
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
 
+  nosso-cartao:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: 'zupacademy/propostas'
+    ports:
+      - 8081:8080
+    depends_on:
+      - bd
+      - analise
+      - contas
+      - jaeger
+    environment:
+      URL_FINANCEIRO: http://analise:9999/api/solicitacao
+      URL_CARTOES: http://contas:8888/api/cartoes
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      SENHA_BANCO: root
+      BANCO_DADOS: jdbc:mysql://bd:3306/nossocartao
+      USUARIO_BANCO: root
+
+
+  bd:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: 'nossocartao'
+      MYSQL_USER: 'nossocartao'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3307:3306'
+
+
   transacoes:
     image: 'zupacademy/transacoes'
     ports:
@@ -112,7 +144,7 @@ services:
     image: prom/prometheus:v2.22.0
     volumes:
      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-     - prometheus-volume:/etc/prometheus/
+     # - prometheus-volume:/etc/prometheus/
     ports:
       - "9090:9090"
 

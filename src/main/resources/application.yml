@@ -12,9 +12,9 @@ management:
 
 spring:
     datasource:
-        password: root
-        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/nossocartao
-        username: root
+        password: ${SENHA_BANCO:root}
+        url: ${BANCO_DADOS:jdbc:mysql://localhost:3306/nossocartao}
+        username: ${USUARIO_BANCO:root}
     jpa:
         hibernate:
             ddl-auto: update

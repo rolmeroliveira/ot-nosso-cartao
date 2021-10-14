@@ -1,6 +1,6 @@
-package cloud.openfeign.ribbon;
+package org.springframework.cloud.openfeign.ribbon;
 
-import cloud.netflix.ribbon.SpringClientFactory;
+import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import feign.Client;
 
 

@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 
 @Configuration
 @EnableWebSecurity
-@Profile("dev")
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 //    A implementacao do metodo foi comentada porque era muito chata de manter em tempo de dev
@@ -37,10 +36,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().disable().csrf().disable().authorizeRequests()
-                .antMatchers("/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/h2/**").permitAll()
-                .and().headers().frameOptions().sameOrigin();
+                .anyRequest().permitAll();
 
 
     }
