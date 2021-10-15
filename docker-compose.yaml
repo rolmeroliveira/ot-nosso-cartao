@@ -101,6 +101,7 @@ services:
       SENHA_BANCO: root
       BANCO_DADOS: jdbc:mysql://bd:3306/nossocartao
       USUARIO_BANCO: root
+      CRYPTO_KEY: ba8ec2987e79be29
 
 
   bd:

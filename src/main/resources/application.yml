@@ -47,3 +47,5 @@ server:
 
 
 periodicidade-vincula-cartao: ${PERIODICIDADE_VINCULA_CARTAO:2000}
+
+crypto-key: ${CRYPTO_KEY:ba8ec2987e79be29}

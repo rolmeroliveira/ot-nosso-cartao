@@ -3,6 +3,7 @@ package com.zup.nossocartao.proposta;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zup.nossocartao.cartao.Cartao;
 import com.zup.nossocartao.cartao.StatusAssociaCartao;
+import com.zup.nossocartao.util.Encriptador;
 import com.zup.nossocartao.validacao.CpfOuCnpjValido;
 
 import javax.persistence.*;
@@ -25,10 +26,9 @@ public class Proposta {
     private Long id;
 
     //Documento do solicitante deve ser obrigatório e válido
-
-    @JsonProperty
     @NotBlank
     @CpfOuCnpjValido(message = "Fornato incorreto de CPF ou CNPJ")
+    @Convert(converter = Encriptador.class)
     private String documento;
 
     //E-mail não pode ser vazio, nulo ou inválido
